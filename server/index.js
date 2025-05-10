@@ -1,10 +1,16 @@
 const express = require('express')
 const dotenv = require('dotenv').config()
 const db = require('./models')
+const cors = require('cors')
 
 const port = process.env.SERVER_PORT || 3000
 
 const app = express()
+// middlewear
+// cors Permette al server Express di accettare richieste da origini diverse.
+// Senza cors non potresti connettere il client con il server
+app.use(cors())  
+app.use(express.json())
 
 // Routers
 const postRouter = require('./routes/Posts')
