@@ -98,7 +98,7 @@ Ho aggiunto "proxy" nel package.json così da non dover scrivere sempre l'intero
 
 # Course 4
 ## Client
-npm react-router-dom
+npm install react-router-dom formik yup
 !!! Switch in react-router-dom è deprecato, ora nella React V6 si usa routes
 !!! vale anche per component
 NO: `<Route path="/" exact component={Home}/>`
@@ -109,4 +109,10 @@ crei il folder client/src/pages/ per organizzare tutti i tuoi possibili routes
 
 L'obbiettivo è quello di avere in App.js la struttura dei nostri routes
 
-Fermo al minuto 9:47
+La libreria 'formik' permette di validare i dati facilmente in un form, viene utilizzata spesso insieme a 'yup' per gestire la form validation.
+
+----------
+!!! Ho creato un file server/constant.js in cui ci ho inserito i diversi status code che dovrò utilizzare, in questo modo quando faccio una chiamata ad una route restituisco lo status code opportuno attraverso la giusta costante
+----------
+
+# Course 5

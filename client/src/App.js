@@ -10,6 +10,7 @@ function App() {
     <div className='App'>
       <Router>
         <Link to="/createpost">Create A Post</Link>
+        <Link to="/">Home Page</Link>
         <Routes>
           {/* path="/" indica l'entrypoint del sito*/}
           <Route path="/" exact element={<Home />}/>
