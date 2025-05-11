@@ -49,6 +49,10 @@ Se non funzionano aggiungi davanti npx ad ogni comando
 !!!
 Il folder server/models/ serve per contenere tutte le varie tabelle. Chiami un nuovo file con il nome della tabella corrispondente e al suo interno crei la struttura della tabella
 Vado in confi/config.json per modificare le variabli del db, attualmente modifico solo in "development"
+-----------
+CURIOSITÀ: Essendo abituato a lavorare con xampp ero abituato ad attivare manualmente il server, con mysql server si attiva in automatico all'avvio del pc e rimane in background, in questo modo non mi serve loggarmi come root per "attivare" il server.
+-----------
+
 
 # Course 2
 Middlewear in Express: è un afunzione che può ricevere req, res e next e può:
@@ -92,4 +96,17 @@ Ho aggiunto "proxy" nel package.json così da non dover scrivere sempre l'intero
 
 > Un **hook** in react è una funzione speciale che mi permette di usare funzionalità di React all'interno dei componenti funzionali. Un esempio sono `useState`,`useEffect`.
 
-Min 16:57. Vai a copiare dalla sua repo il css
+# Course 4
+## Client
+npm react-router-dom
+!!! Switch in react-router-dom è deprecato, ora nella React V6 si usa routes
+!!! vale anche per component
+NO: `<Route path="/" exact component={Home}/>`
+SI: `<Route path="/" exact element={<Home />}/>`
+crei il folder client/src/pages/ per organizzare tutti i tuoi possibili routes
+
+> Usa l'estensione "ES7 React..." per lo shortcut "rfce"
+
+L'obbiettivo è quello di avere in App.js la struttura dei nostri routes
+
+Fermo al minuto 9:47

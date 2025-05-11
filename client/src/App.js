@@ -1,43 +1,21 @@
 import './App.css';
-import axios from 'axios';
-import { useEffect, useState} from 'react'; 
+import {BrowserRouter as Router, Route, Routes, Link} from 'react-router-dom'
+import Home from './pages/Home'
+import CreatePost from './pages/CreatePost'
+
 
 function App() {
 
-  // Uso l'hook per creare una variabile di stato (listOfPosts) dentro un componente React
-  const [listOfPosts, setListOfPosts] = useState([]) 
-  // Permette di run immediatamente una func quando la pagina si carica 
-  // Dopo la funizone puoi passare una lista di dipendenze di stati
-  // Se la lista è vuota dice a React di eseguire la funzione solo una volta
-  /** es altro use-case:
-   *  useEffect(() => {
-   *    console.log("Eseguo ogni volta che cambia 'count'");
-   *  }, [count]);
-
-   */
-
-  // "proxy": "http://localhost:3001",
-  useEffect(() => {
-    axios.get('/posts')
-      .then((response) => {
-        // Aggiorno lo stato con i dati ricevuti
-        setListOfPosts(response.data) 
-      });
-  }, []);
-
-
   return (
     <div className='App'>
-      {
-        listOfPosts.map((value, key)=>{ 
-          return <div className='post'>
-            <div className='title'>{value.title}</div>
-            <div className='body'>{value.postText}</div>
-            <div className='footer'>{value.username}</div>
-            
-          </div>
-        })
-      }
+      <Router>
+        <Link to="/createpost">Create A Post</Link>
+        <Routes>
+          {/* path="/" indica l'entrypoint del sito*/}
+          <Route path="/" exact element={<Home />}/>
+          <Route path="/createpost" exact element={<CreatePost />}/>
+        </Routes>
+      </Router>
     </div>
   );
 }
