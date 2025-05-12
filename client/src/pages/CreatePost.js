@@ -2,8 +2,11 @@ import React from 'react'
 import {Formik, Form, Field, ErrorMessage} from 'formik'
 import * as Yup from 'yup'
 import axios from 'axios';
+import {useNavigate} from 'react-router-dom'
 
 function CreatePost() {
+  let navigate = useNavigate() 
+
   // Bisogna inizializzare i campi, per poi passarli a Formik
   const initialValues = {
     title: '',
@@ -21,7 +24,7 @@ function CreatePost() {
   const onSubmit = (data)=>{
     axios.post('/posts', data)
       .then((response) => {
-        console.log("201 OK")
+        navigate('/') // redirect to home page
       });
   }
 

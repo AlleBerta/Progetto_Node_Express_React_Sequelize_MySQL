@@ -1,7 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const {Posts} = require('../models')
-const {constant} = require('../constants')
+const { Posts } = require('../models')
 const { constants } = require('../constants') // Costanti di stauts code
 
 // Middlewear in express: funzione che riceve req, res e next
@@ -14,8 +13,18 @@ router.get('/', async (req, res) =>{
         console.log(err);
         res.status(constants.SERVER_ERROR).json({error: "Errore interno."})
     }
-
 });
+
+router.get('/byId/:id', async (req, res)=>{
+    const id = req.params.id  
+    try{
+        const post = await Posts.findByPk(id)
+        res.status(constants.OK).json(post)
+    } catch (err) {
+        console.log(err);
+        res.status(constants.SERVER_ERROR).json({error: "Errore interno."})
+    }
+})
 
 router.post("/", async (req, res)=>{
     try {

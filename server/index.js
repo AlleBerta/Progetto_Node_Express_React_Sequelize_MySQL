@@ -15,10 +15,12 @@ app.use(express.json())
 // Routers
 const postRouter = require('./routes/Posts')
 app.use("/posts", postRouter)
+const commentRouter = require('./routes/Comments')
+app.use("/comments", commentRouter)
 
 
 // Creo prima la connessione con il db, sequelize crea eventuali tabelle non presenti nel db che sono presenti nel nostro folder models/
-db.sequelize.sync().then(()=>{
+db.sequelize.sync({alter: true}).then(()=>{
     app.listen(port, ()=>{
         console.log(`Server is running on port ${port}`)
     })

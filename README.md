@@ -116,3 +116,29 @@ La libreria 'formik' permette di validare i dati facilmente in un form, viene ut
 ----------
 
 # Course 5
+`useNavigate()` di `react-router-dom` è un hook di React Router v6 che mi permette di navigare tramite codice js
+> navigate("/login", { replace: true });  // Sostituisce l’ultima entry nella history (utile per redirect dopo login)
+> navigate(-1); // Torna indietro (come premere il pulsante "Back" del browser)
+
+# Course 6
+## Server/models
+Come fare Associations tra due tabelle con Sequelize?
+
+Creare la relazione attraverso associate:
+- Uno a molti (0, N) / (1, N):
+    - Nella tabella con PK: `A.hasMany(B)`
+    - Nella tabella con FK: `B.belongsTo(A)`
+- Uno a uno (1, 1):
+    - Nella tabella con PK: `A.hasOne(B)`
+    - Nella tabella con FK: `B.belongsTo(A)`
+- Molti a molti (N, N):
+    - Nella tabella con PK: `A.belongsToMany(B, {throught: 'AB'})`
+    - Nella tabella con FK: `B.belongsTo(A, {throught: 'AB'})`
+
+!!! Nota: Quando crei questa relazione tra due tabelle che hai già creato, puoi inserire in server/index `db.sequelize.sync({force/alter: true}).`:
+- `{alter: true}` aggiorna lo schema di una tabella senza eliminare i dati, a volte non puoi gestire tutte le modifiche / aggiornare completamente tutto
+- `{force: true}` Elimina tutto lo schema per poi ricrearlo, perdendo così tutti i tuoi dati
+
+
+
+min 15:28. Incongruenza. In models/comments ho creato PostId, quando per correttezza sarebbe postId. In server/index.js dentro a sync metti {force: true} così si mette tutto a posto, il problema è che perdi i dati
