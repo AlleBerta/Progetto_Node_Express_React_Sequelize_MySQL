@@ -139,6 +139,5 @@ Creare la relazione attraverso associate:
 - `{alter: true}` aggiorna lo schema di una tabella senza eliminare i dati, a volte non puoi gestire tutte le modifiche / aggiornare completamente tutto
 - `{force: true}` Elimina tutto lo schema per poi ricrearlo, perdendo così tutti i tuoi dati
 
-
-
-min 15:28. Incongruenza. In models/comments ho creato PostId, quando per correttezza sarebbe postId. In server/index.js dentro a sync metti {force: true} così si mette tutto a posto, il problema è che perdi i dati
+# Course 7
+In client/.../Post.js mostra come mostrare a monitor un commento appena inserito insieme agli alti commenti mostrati, usando lo state `newComment`
