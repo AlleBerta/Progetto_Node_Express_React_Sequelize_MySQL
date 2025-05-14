@@ -17,6 +17,8 @@ const postRouter = require('./routes/Posts')
 app.use("/posts", postRouter)
 const commentRouter = require('./routes/Comments')
 app.use("/comments", commentRouter)
+const usersRouter = require('./routes/Users')
+app.use("/auth", usersRouter)
 
 
 // Creo prima la connessione con il db, sequelize crea eventuali tabelle non presenti nel db che sono presenti nel nostro folder models/

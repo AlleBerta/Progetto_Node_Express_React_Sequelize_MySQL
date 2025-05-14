@@ -5,6 +5,7 @@ Questo repository contiene la mia implementazione del [corso gratuito su YouTube
 ## 🧠 Obiettivo del progetto
 
 Creare una web-app in grado di:
+
 - Registrare e autenticare utenti
 - Permettere la creazione e visualizzazione di post
 - Consentire agli utenti di commentare e mettere "like" ai post altrui
@@ -12,6 +13,7 @@ Creare una web-app in grado di:
 ## 🛠️ Tecnologie utilizzate
 
 ### Backend
+
 - Node.js
 - Express.js
 - RESTful API
@@ -19,9 +21,11 @@ Creare una web-app in grado di:
 - Sequelize (ORM)
 
 ### Frontend
+
 - React.js
 
 ## 📂 Struttura del progetto
+
 Full-Stack-Web-Dev-Course/
 │
 ├── client/ # Frontend React
@@ -34,28 +38,35 @@ Full-Stack-Web-Dev-Course/
 > ⚠️ Questa sezione è in aggiornamento continuo man mano che proseguo il corso.
 
 # Course 1
+
 ## Server
+
 npn init -y
-npm install express cors mysql2 nodemon 
+npm install express cors mysql2 nodemon
+
 ---
-Ho aggiunto anche la dipendenza di dotenv per gestire meglio le variabili segrete
----
+
+## Ho aggiunto anche la dipendenza di dotenv per gestire meglio le variabili segrete
+
 ### Database
+
 Sempre dentro al server
-npm install sequelize 
-npm install --save-dev sequelize-cli; strumento per CLI, aiuta ad inizializzare la struttura base (seqeulize init), generare modelli e migrazioni (sequelize model:generate) ed applicare migrazioni al DB (sequelize db:migrate). 
-!!! 
+npm install sequelize
+npm install --save-dev sequelize-cli; strumento per CLI, aiuta ad inizializzare la struttura base (seqeulize init), generare modelli e migrazioni (sequelize model:generate) ed applicare migrazioni al DB (sequelize db:migrate).
+!!!
 Se non funzionano aggiungi davanti npx ad ogni comando
 !!!
 Il folder server/models/ serve per contenere tutte le varie tabelle. Chiami un nuovo file con il nome della tabella corrispondente e al suo interno crei la struttura della tabella
 Vado in confi/config.json per modificare le variabli del db, attualmente modifico solo in "development"
------------
-CURIOSITÀ: Essendo abituato a lavorare con xampp ero abituato ad attivare manualmente il server, con mysql server si attiva in automatico all'avvio del pc e rimane in background, in questo modo non mi serve loggarmi come root per "attivare" il server.
------------
 
+---
+
+## CURIOSITÀ: Essendo abituato a lavorare con xampp ero abituato ad attivare manualmente il server, con mysql server si attiva in automatico all'avvio del pc e rimane in background, in questo modo non mi serve loggarmi come root per "attivare" il server.
 
 # Course 2
+
 Middlewear in Express: è un afunzione che può ricevere req, res e next e può:
+
 - Modificare la richiesta con `get`
 - Modificare la risposta con `post`
 - Bloccare o permettere il flusso verso il prossimo middlewear con `next`
@@ -64,25 +75,32 @@ Decidiamo di inviare e ricevere i dati all'interno del nostro progetto solo con 
 
 Perché usiamo `async`/`await` nellle funzioni per dialogare con il db?
 Le operaizioni con il db sono asincrone, non restituiscono un risultato perché ci vuole tempo per:
+
 - Connettersi al db
 - Inviare query
 - Attendere una risposta
 
 **Node.js è single-threaded** e non blocca mai il fflusso, quindi invece di attendere la risposta esegue altro
 `async` restituisce una **funzione promessa** (`Promise`) e `await` aspetta che una `Promise` venga risolta o rifiutata, prima di continuare l'esecuzione. Se non si inserisce `await` non ricavi i dati.
+
 > esempio: Immagina che `Posts.findAll()` sia come ordinare un caffè:
 > Senza `await`, esci dal bar con lo scontrino (la `Promise`), ma senza il caffè.
 > Con `await`, aspetti al bancone finché ti danno il caffè, e poi lo porti via
 
 # Course 3
+
 ## Server
+
 npn i cors
+
 ## Client
+
 npm create-react-app .
 npm istall axios
 npm start; per lanciare il frontend
 
 Rimozione file creati automaticamente:
+
 - App.tes.js
 - index.css
 - logo.csv
@@ -92,12 +110,14 @@ Rimozione file creati automaticamente:
 
 Ho aggiunto "proxy" nel package.json così da non dover scrivere sempre l'intero url quando faccio chiamare con axios
 
-!!! Se noti nella console log della pagina una doppia risposta è dovuto a `StrictMode` presente in client/src/index.js, è un tool che simula il mounting due volte per aiutare a trovare il side-effect insediderati nei miei hook.  In fase di dev posso ignorare questo motivo
+!!! Se noti nella console log della pagina una doppia risposta è dovuto a `StrictMode` presente in client/src/index.js, è un tool che simula il mounting due volte per aiutare a trovare il side-effect insediderati nei miei hook. In fase di dev posso ignorare questo motivo
 
 > Un **hook** in react è una funzione speciale che mi permette di usare funzionalità di React all'interno dei componenti funzionali. Un esempio sono `useState`,`useEffect`.
 
 # Course 4
+
 ## Client
+
 npm install react-router-dom formik yup
 !!! Switch in react-router-dom è deprecato, ora nella React V6 si usa routes
 !!! vale anche per component
@@ -111,33 +131,75 @@ L'obbiettivo è quello di avere in App.js la struttura dei nostri routes
 
 La libreria 'formik' permette di validare i dati facilmente in un form, viene utilizzata spesso insieme a 'yup' per gestire la form validation.
 
-----------
-!!! Ho creato un file server/constant.js in cui ci ho inserito i diversi status code che dovrò utilizzare, in questo modo quando faccio una chiamata ad una route restituisco lo status code opportuno attraverso la giusta costante
-----------
+---
+
+## !!! Ho creato un file server/constant.js in cui ci ho inserito i diversi status code che dovrò utilizzare, in questo modo quando faccio una chiamata ad una route restituisco lo status code opportuno attraverso la giusta costante
 
 # Course 5
+
 `useNavigate()` di `react-router-dom` è un hook di React Router v6 che mi permette di navigare tramite codice js
-> navigate("/login", { replace: true });  // Sostituisce l’ultima entry nella history (utile per redirect dopo login)
+
+> navigate("/login", { replace: true }); // Sostituisce l’ultima entry nella history (utile per redirect dopo login)
 > navigate(-1); // Torna indietro (come premere il pulsante "Back" del browser)
 
 # Course 6
+
 ## Server/models
+
 Come fare Associations tra due tabelle con Sequelize?
 
 Creare la relazione attraverso associate:
+
 - Uno a molti (0, N) / (1, N):
-    - Nella tabella con PK: `A.hasMany(B)`
-    - Nella tabella con FK: `B.belongsTo(A)`
+  - Nella tabella con PK: `A.hasMany(B)`
+  - Nella tabella con FK: `B.belongsTo(A)`
 - Uno a uno (1, 1):
-    - Nella tabella con PK: `A.hasOne(B)`
-    - Nella tabella con FK: `B.belongsTo(A)`
+  - Nella tabella con PK: `A.hasOne(B)`
+  - Nella tabella con FK: `B.belongsTo(A)`
 - Molti a molti (N, N):
-    - Nella tabella con PK: `A.belongsToMany(B, {throught: 'AB'})`
-    - Nella tabella con FK: `B.belongsTo(A, {throught: 'AB'})`
+  - Nella tabella con PK: `A.belongsToMany(B, {throught: 'AB'})`
+  - Nella tabella con FK: `B.belongsTo(A, {throught: 'AB'})`
 
 !!! Nota: Quando crei questa relazione tra due tabelle che hai già creato, puoi inserire in server/index `db.sequelize.sync({force/alter: true}).`:
+
 - `{alter: true}` aggiorna lo schema di una tabella senza eliminare i dati, a volte non puoi gestire tutte le modifiche / aggiornare completamente tutto
 - `{force: true}` Elimina tutto lo schema per poi ricrearlo, perdendo così tutti i tuoi dati
 
 # Course 7
+
 In client/.../Post.js mostra come mostrare a monitor un commento appena inserito insieme agli alti commenti mostrati, usando lo state `newComment`
+
+# Course 8 - Registration and Login
+
+## Server
+
+npm install bcrypt; hash strings
+
+Questo è lo standard di json che voglio restituire come risposta lato server:
+'''
+{
+success: true/false,
+message: "messaggio"
+}
+'''
+In questo modo invio sempre una risposta uniforme, comoda per il client ed utile per eventuali debug.
+
+!!! NOTA per axios: axios tratta qualsiasi status >=400 come errore, quindi va automaticamente nel bloco `catch`, quindi gestisci i successi nel `then` e gli errori nel `catch`
+
+es in client/src/pages/Login.js
+'''
+axios.post("/auth/login", data).then((response) => {
+console.log(response.data.message)
+})
+.catch((error) => {
+if (error.response) {
+console.log("Errore dal server:", error.response.data.message);
+} else {
+console.log("Errore generico:", error.message);
+}
+})
+'''
+
+!!!! **Promise**: viene restituita da `axios.post(..)`, `then()` e `catch()` sono metodi della promise
+
+min 37:06
