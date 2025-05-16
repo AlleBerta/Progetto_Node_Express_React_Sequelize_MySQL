@@ -5,14 +5,16 @@ import CreatePost from './pages/CreatePost'
 import Post from './pages/Post'
 import Login from './pages/Login'
 import Registrations from './pages/Registrations'
-import { AuthContext } from './helpers/AuthContex'
+import { AuthContext } from './helpers/AuthContext'
 import { useState, useEffect } from 'react';
 import axios from 'axios'
 
 function App() {
 
-  // Creo uno state per inserire il link di login / registration
-  const [authState, setAuthState] = useState(false)
+  // Creo uno state per:
+  // 1. inserire il link di login / registration o logout
+  // 2. salvare username, id e status
+  const [authState, setAuthState] = useState({ username: "", id: 0, status: false })
 
   // Viene eseguita appena si apre la pagina, controlla se è presente un accesToken nel local storage
   useEffect(() => {
@@ -25,21 +27,33 @@ function App() {
       headers: {
         accessToken: localStorage.getItem('accessToken')
       }
+    }).then((response) => {
+      // invio file json sempre con success: true/false
+      if (!response.data.success) {
+        // Modifico solo il campo status 
+        setAuthState(prev => ({ ...prev, status: false }))
+      }
+      else {
+        setAuthState({
+          username: response.data.user.username,
+          id: response.data.user.id,
+          status: true
+        })
+      }
+    }).catch((error) => {
+      if (error.response) {
+        setAuthState(prev => ({ ...prev, status: false }))
+      }
+      else {
+        console.log("Errore generico:", error.message);
+      }
     })
-      .then((response) => {
-        // invio file json sempre con success: true/false
-        if (!response.data.success) setAuthState(false)
-        else setAuthState(true)
-      })
-      .catch((error) => {
-        if (error.response) {
-          setAuthState(false)
-        } else {
-          console.log("Errore generico:", error.message);
-        }
-      })
-
   }, [])
+
+  const logout = () => {
+    localStorage.removeItem("accessToken")
+    setAuthState({ username: "", id: 0, status: false })
+  }
 
   return (
     <div className='App'>
@@ -49,12 +63,16 @@ function App() {
           <div className='navbar'>
             <Link to="/">Home Page</Link>
             <Link to="/createpost">Create A Post</Link>
-            {!authState && (
+            {!authState.status ? (
               <>
                 <Link to="/login">Login</Link>
                 <Link to="/registrations">Registration</Link>
               </>
+            ) : (
+              <button onClick={logout}> Logout </button>
             )}
+
+            <h1>{authState.username}</h1>
           </div>
           <Routes>
             {/* path="/" indica l'entrypoint del sito*/}

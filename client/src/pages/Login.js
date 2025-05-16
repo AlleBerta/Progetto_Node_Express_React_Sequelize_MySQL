@@ -1,7 +1,8 @@
 import React, { useState, useContext } from 'react'
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom'
-import { AuthContext } from '../helpers/AuthContex'
+import { AuthContext } from '../helpers/AuthContext'
+import { handleLoginSuccess } from '../helpers/AuthHelpers'
 
 function Login() {
     const [username, setUsername] = useState("");
@@ -13,13 +14,12 @@ function Login() {
     const login = () => {
         const data = { username: username, password: password }
         axios.post("/auth/login", data).then((response) => {
-            // Crea un token di sessione visibile in devTools -> Application -> Local Storage 
-            // Uso Local Storage perchè condivide il token tra le pagine del suo dominio
-            localStorage.setItem("accessToken", response.data.token)
-            // Modifica il valore dell'authState
-            setAuthState(true)
-            // redirect to home page
-            navigate("/")
+            // Creo token di sessione + aggiorno l'hook di autenticazione, infine faccio redirect to home page
+            const enrichedData = {
+                ...data,                        // username e password
+                token: response.data.data.token // nuovo campo aggiunto
+            };
+            handleLoginSuccess(enrichedData, setAuthState, navigate)
         }).catch((error) => {
             if (error.response) {
                 console.log("Errore dal server:", error.response.data.message);

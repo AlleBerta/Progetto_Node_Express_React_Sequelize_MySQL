@@ -253,3 +253,11 @@ axios.get('/auth/verify', {
 ```
 
 Se dovessi invertire il then() con il catch() potrebbe succedere che axios restituisce un errore (status con più di 400), non restituisce nulla e il then ha `respose === undefined`
+
+# Course 11 - Loggin Out
+
+Implementato funzionalità di log out, ho generalizzato tutti i file json che il server invia come risposta in modo da avere un BE più strutturato.
+
+Ho generalizzato la funzione jwt, inserendola in server/utils/jwt.js
+Ho generalizzato la funzione handleLoginSuccess inserendola in client/src/helpers/AuthHelpers.js
+Ora quando ti registri vieni reindirizzato alla home page e sei già loggato
