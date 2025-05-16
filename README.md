@@ -176,18 +176,21 @@ In client/.../Post.js mostra come mostrare a monitor un commento appena inserito
 npm install bcrypt; hash strings
 
 Questo è lo standard di json che voglio restituire come risposta lato server:
-'''
+
+```Javascript
 {
-success: true/false,
-message: "messaggio"
+  success: true/false,
+  message: "messaggio"
 }
-'''
+```
+
 In questo modo invio sempre una risposta uniforme, comoda per il client ed utile per eventuali debug.
 
 !!! NOTA per axios: axios tratta qualsiasi status >=400 come errore, quindi va automaticamente nel bloco `catch`, quindi gestisci i successi nel `then` e gli errori nel `catch`
 
 es in client/src/pages/Login.js
-'''
+
+```Javascript
 axios.post("/auth/login", data).then((response) => {
 console.log(response.data.message)
 })
@@ -198,8 +201,55 @@ console.log("Errore dal server:", error.response.data.message);
 console.log("Errore generico:", error.message);
 }
 })
-'''
+```
 
 !!!! **Promise**: viene restituita da `axios.post(..)`, `then()` e `catch()` sono metodi della promise
 
-min 37:06
+# Course 9 - JWT Auth
+
+> In questo video salverà i dati nella sessione (vulnerabile ad xss), anche se è più sicuro salvarlo nei cookie (ha fatto un video a riguardo)
+
+## server
+
+npm install jsonwebtoken
+in server/routes/Users.js ho tre campi di risposta:
+
+- `success`: è un campo booleano utile per controlli rapidi lato client
+- `message`: è un campo per comunicazioni all'utente o log
+- `token`: è un campo esplicito e semantico, il client sa dove trovare i jwt
+
+L'obbiettivo è quello di inserire il jwt nella session Storage presente nel dev tool in Application
+
+In middlewares/AuthMiddleware.js la funzione validateToken servirà per convalidare il jwt, andrà poi inserita negli endpoint creati nelle api **prima** di eseguire le funzioni.
+
+# Course 10 - AUTH in the Frontend
+
+Nel middleware assegnato a req.user il payload in chiaro che ho cifrato nel jwt, in questo modo posso accedere a queste info ogni volta che faccio una chiamata ad una api che utilizzi nell'header jwt
+
+Cosa succede quando salvo il jwt in questi storage?
+
+- Session Storage: l'utente rimane autenticato solo fino alla chiusura della scheda (es: dashborard bancaria), **rischio di XSS attack**
+- Local Storage: l'utente resta autenticato tra riavvii del browser, è condiviso tra schede/finestre dello stesso domino (es: social network), **rischio di XSS attack**
+
+!!!! NOTA: ricorda che quando stai utilizzando un catch() va messo sempre in fondo
+
+```Javascript
+axios.get('/auth/verify', {
+  headers: {
+    accessToken: localStorage.getItem('accessToken')
+  }
+}).then((response) => {
+    // invio file json sempre con success: true/false
+    if (!response.data.success) setAuthState(false)
+    else setAuthState(true)
+}).catch((error) => {
+    if (error.response) {
+      setAuthState(false)
+    } else {
+      console.log("Errore generico:", error.message);
+    }
+  }
+)
+```
+
+Se dovessi invertire il then() con il catch() potrebbe succedere che axios restituisce un errore (status con più di 400), non restituisce nulla e il then ha `respose === undefined`

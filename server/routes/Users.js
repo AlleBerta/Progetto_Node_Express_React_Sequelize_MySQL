@@ -3,6 +3,10 @@ const router = express.Router()
 const { Users } = require('../models')
 const { constants } = require('../constants') // Costanti di stauts code
 const bcrypt = require('bcrypt')
+const dotenv = require('dotenv').config()
+const { validateToken } = require('../middlewares/AuthMiddleware')
+
+const { sign } = require('jsonwebtoken')
 
 router.post("/", async (req, res) => {
     try {
@@ -13,11 +17,11 @@ router.post("/", async (req, res) => {
                 username: username,
                 password: hash
             })
-            res.status(constants.RESOURCE_CREATED).json("Success!!!")
+            res.status(constants.RESOURCE_CREATED).json({ success: true, message: "Success!!!" })
         })
     } catch (err) {
         console.log(err);
-        res.status(constants.SERVER_ERROR).json({ error: "Errore interno." })
+        res.status(constants.SERVER_ERROR).json({ success: false, message: "Errore interno." })
     }
 })
 
@@ -41,8 +45,18 @@ router.post('/login', async (req, res) => {
             .status(constants.UNAUTHORIZED)
             .json({ success: false, message: "Wrong Username and Password combination" })
 
-        return res.status(constants.OK).json({ success: true, message: "You logged in!!" })
+        // Genero JWT
+        const accessToken = sign(
+            { username: user.username, id: user.id },
+            process.env.JWT_STRING
+        )
+        return res.status(constants.OK).json({ success: true, message: "You logged in!!", token: accessToken })
     })
+})
+
+// endpoint per l'autorizzazione: una volta chiamato verifica attraverso il validateToken e restituisce il body
+router.get('/verify', validateToken, (req, res) => {
+    res.status(constants.OK).json(req.user)
 })
 
 module.exports = router
