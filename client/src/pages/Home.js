@@ -3,7 +3,6 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom'
 
-
 function Home() {
 
   // Uso l'hook per creare una variabile di stato (listOfPosts) dentro un componente React
@@ -15,7 +14,6 @@ function Home() {
    *  useEffect(() => {
    *    console.log("Eseguo ogni volta che cambia 'count'");
    *  }, [count]);
-
    */
 
   let navigate = useNavigate()
@@ -30,14 +28,44 @@ function Home() {
       });
   }, []);
 
+  const likeAPost = (postId) => {
+    axios.post("/likes", {
+      PostId: postId
+    }, {
+      headers: { accessToken: localStorage.getItem('accessToken') }
+    }).then((response) => {
+      alert(response.data.message)
+      setListOfPosts(listOfPosts.map((post) => {
+        if (post.id === postId) {
+          if (response.data.data.liked) {
+            // console.log("Post: " + post.title + ", Likes: " + post.Likes)
+            // Aggiungo un campo fittizio (0) in fondo alla lista del campo Likes
+            // In questo modo, nel display ci sarà il contatore che ne conta uno in più
+            return { ...post, Likes: [...post.Likes, 0] }
+          } else {
+            const likeArray = post.Likes
+            likeArray.pop() // Rimuove l'ultimo elemento della lista
+            return { ...post, Likes: likeArray }
+          }
+        } else {
+          return post
+        }
+      }))
+    }
+    )
+  }
+
   return (
     <div>
       {
         listOfPosts.map((value, key) => {
-          return <div key={value.id} className='post' onClick={() => { navigate(`/post/${value.id}`) }}>
+          return <div key={value.id} className='post' >
             <div className='title'>{value.title}</div>
-            <div className='body'>{value.postText}</div>
-            <div className='footer'>{value.username}</div>
+            <div className='body' onClick={() => { navigate(`/post/${value.id}`) }}>{value.postText}</div>
+            <div className='footer'>
+              {value.username} <button onClick={() => { likeAPost(value.id) }}> Like </button>
+              <label>{value.Likes.length}</label>
+            </div>
           </div>
         })
       }

@@ -1,15 +1,15 @@
 const express = require('express')
 const router = express.Router()
-const { Posts } = require('../models')
-const { constants } = require('../constants') // Costanti di stauts code
+const { Posts, Likes } = require('../models')
+const { constants } = require('../utils/constants') // Costanti di stauts code
 
 // Middlewear in express: funzione che riceve req, res e next
 // Ogni volta che si fa una richiesta al db deve essere asyncrona
 router.get('/', async (req, res) => {
     try {
-        const listOfPosts = await Posts.findAll()
+        // Ricavo anche il numero totale di like di ogni post
+        const listOfPosts = await Posts.findAll({ include: [Likes] })
         res.status(constants.OK).json({ success: true, data: listOfPosts })
-        // res.status(constants.OK).json(listOfPosts)
     } catch (err) {
         console.log(err);
         res.status(constants.SERVER_ERROR).json({ success: false, message: "Errore interno." })
@@ -19,7 +19,7 @@ router.get('/', async (req, res) => {
 router.get('/byId/:id', async (req, res) => {
     const id = req.params.id
     try {
-        const post = await Posts.findByPk(id)
+        const post = await Posts.findByPk(id, { include: [Likes] })
         res.status(constants.OK).json({ success: true, data: post })
         // res.status(constants.OK).json(post)
     } catch (err) {

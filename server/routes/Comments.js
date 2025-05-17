@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const { Comments } = require('../models')
-const { constants } = require('../constants')
+const { constants } = require('../utils/constants')
 const { validateToken } = require('../middlewares/AuthMiddleware')
 const { where } = require('sequelize')
 

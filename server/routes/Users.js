@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const { Users } = require('../models')
-const { constants } = require('../constants') // Costanti di stauts code
+const { constants } = require('../utils/constants') // Costanti di stauts code
 const bcrypt = require('bcrypt')
 const dotenv = require('dotenv').config()
 const { validateToken } = require('../middlewares/AuthMiddleware')
@@ -29,7 +29,6 @@ router.post("/", async (req, res) => {
         res.status(constants.RESOURCE_CREATED).json({ success: true, message: "Registered Successfully!!!", data: { token: accessToken, username: username, id: newUser.id } })
 
     } catch (err) {
-        console.log("AIUTOOOO: " + err);
         res.status(constants.SERVER_ERROR).json({ success: false, message: "Errore interno." })
     }
 })

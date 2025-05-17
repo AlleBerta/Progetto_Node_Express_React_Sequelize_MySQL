@@ -1,6 +1,6 @@
 const { verify } = require("jsonwebtoken")
 const dotenv = require('dotenv').config()
-const { constants } = require("../constants")
+const { constants } = require('../utils/constants')
 
 const validateToken = (req, res, next) => {
     // Ricavo il token dall'header

@@ -261,3 +261,10 @@ Implementato funzionalità di log out, ho generalizzato tutti i file json che il
 Ho generalizzato la funzione jwt, inserendola in server/utils/jwt.js
 Ho generalizzato la funzione handleLoginSuccess inserendola in client/src/helpers/AuthHelpers.js
 Ora quando ti registri vieni reindirizzato alla home page e sei già loggato
+
+# Course 12 - Liking System
+
+Ho aggiunto un file server/utils/respose.js per uniformare definitivamente le risposte che invia il server
+Ho spostato server/constants in server/utils/constants.js per una organizzazione migliore
+
+# Course 13 - Page Not Found

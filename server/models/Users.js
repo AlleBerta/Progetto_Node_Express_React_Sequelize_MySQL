@@ -1,4 +1,4 @@
-module.exports = (sequelize, DataTypes) =>{
+module.exports = (sequelize, DataTypes) => {
     const Users = sequelize.define("Users", {
         username: {
             type: DataTypes.STRING,
@@ -8,12 +8,17 @@ module.exports = (sequelize, DataTypes) =>{
             type: DataTypes.STRING,
             allowNull: false /** NOT NULL*/
         },
-    }); 
+    });
 
-    // 1 User can have many Posts
     Users.associate = (models) => {
+        // User 1 - N Posts
         Users.hasMany(models.Posts, {
             onDelete: "cascade", /* Se elimino un post elimino tutti i commenti associati ad esso */
+        })
+
+        // User 1 - N Likes
+        Users.hasMany(models.Likes, {
+            onDelete: "cascade",
         })
     }
 

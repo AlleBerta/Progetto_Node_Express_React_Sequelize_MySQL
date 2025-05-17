@@ -1,4 +1,4 @@
-// utils/jwt.js
+// File che gestisce la creazione di un jwt
 const { sign } = require("jsonwebtoken");
 const dotenv = require('dotenv').config()
 

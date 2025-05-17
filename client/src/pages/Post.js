@@ -9,7 +9,7 @@ function Post() {
     let { id } = useParams()
 
     // Creo gli state
-    const [postObject, setPostObject] = useState({})
+    const [postObject, setPostObject] = useState({ Likes: [] })
     const [comments, setComments] = useState([])
     const [newComment, setNewComment] = useState("")
     const { authState } = useContext(AuthContext)
@@ -20,6 +20,9 @@ function Post() {
         axios.get(`/posts/byId/${id}`)
             .then((response) => {
                 setPostObject(response.data.data)
+
+                console.log("PostOBJ: " + postObject)
+                console.log("respose: " + response.data.data)
             }).catch((error) => {
                 if (error.response) {
                     alert("Errore dal server: " + error.response.data.message)
@@ -86,13 +89,38 @@ function Post() {
         })
     }
 
+    const likeAPost = (postId) => {
+        axios.post("/likes", {
+            PostId: postId
+        }, {
+            headers: { accessToken: localStorage.getItem('accessToken') }
+        }).then((response) => {
+            alert(response.data.message)
+            setPostObject((post) => {
+                if (response.data.data.liked) {
+                    // console.log("Post: " + post.title + ", Likes: " + post.Likes)
+                    // Aggiungo un campo fittizio (0) in fondo alla lista del campo Likes
+                    // In questo modo, nel display ci sarà il contatore che ne conta uno in più
+                    return { ...post, Likes: [...post.Likes, 0] }
+                } else {
+                    const likeArray = [...post.Likes]
+                    likeArray.pop() // Rimuove l'ultimo elemento della lista
+                    return { ...post, Likes: likeArray }
+                }
+            })
+        })
+    }
+
     return (
         <div className='postPage'>
             <div className='leftSide'>
                 <div className='post' id='individual'>
                     <div className='title'> {postObject.title}  </div>
                     <div className='body'> {postObject.postText} </div>
-                    <div className='footer'> {postObject.username} </div>
+                    <div className='footer'> {postObject.username}
+                        <button onClick={() => { likeAPost(postObject.id) }}> Like </button>
+                        <label>{postObject.Likes.length}</label>
+                    </div>
                 </div>
             </div>
             <div className='rightSide'>
