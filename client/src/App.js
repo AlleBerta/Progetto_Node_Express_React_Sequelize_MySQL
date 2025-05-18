@@ -5,6 +5,7 @@ import CreatePost from './pages/CreatePost'
 import Post from './pages/Post'
 import Login from './pages/Login'
 import Registrations from './pages/Registrations'
+import PageNotFound from './pages/PageNotFound'
 import { AuthContext } from './helpers/AuthContext'
 import { useState, useEffect } from 'react';
 import axios from 'axios'
@@ -61,18 +62,24 @@ function App() {
       <AuthContext.Provider value={{ authState, setAuthState }}>
         <Router>
           <div className='navbar'>
-            <Link to="/">Home Page</Link>
-            <Link to="/createpost">Create A Post</Link>
-            {!authState.status ? (
-              <>
-                <Link to="/login">Login</Link>
-                <Link to="/registrations">Registration</Link>
-              </>
-            ) : (
-              <button onClick={logout}> Logout </button>
-            )}
+            <div className='links'>
 
-            <h1>{authState.username}</h1>
+              {!authState.status ? (
+                <>
+                  <Link to="/login">Login</Link>
+                  <Link to="/registrations">Registration</Link>
+                </>
+              ) : (
+                <>
+                  <Link to="/">Home Page</Link>
+                  <Link to="/createpost">Create A Post</Link>
+                </>
+              )}
+            </div>
+            <div className='loggedInContainer'>
+              <h1>{authState.username}</h1>
+              {authState.status && <button onClick={logout}> Logout</button>}
+            </div>
           </div>
           <Routes>
             {/* path="/" indica l'entrypoint del sito*/}
@@ -81,6 +88,8 @@ function App() {
             <Route path="/post/:id" exact element={<Post />} />
             <Route path="/registrations" exact element={<Registrations />} />
             <Route path="/login" exact element={<Login />} />
+            {/* Questo deve essere l'ultimo route che inserisco */}
+            <Route path="*" exact element={<PageNotFound />} />
           </Routes>
         </Router>
       </AuthContext.Provider>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { AuthContext } from '../helpers/AuthContext'
 
@@ -9,20 +9,18 @@ function Post() {
     let { id } = useParams()
 
     // Creo gli state
-    const [postObject, setPostObject] = useState({ Likes: [] })
+    const [postObject, setPostObject] = useState({})
     const [comments, setComments] = useState([])
     const [newComment, setNewComment] = useState("")
     const { authState } = useContext(AuthContext)
 
+    let navigate = useNavigate()
 
     useEffect(() => {
         // Riceve il post selezionato
         axios.get(`/posts/byId/${id}`)
             .then((response) => {
                 setPostObject(response.data.data)
-
-                console.log("PostOBJ: " + postObject)
-                console.log("respose: " + response.data.data)
             }).catch((error) => {
                 if (error.response) {
                     alert("Errore dal server: " + error.response.data.message)
@@ -89,37 +87,25 @@ function Post() {
         })
     }
 
-    const likeAPost = (postId) => {
-        axios.post("/likes", {
-            PostId: postId
-        }, {
+    const deletePost = ((id) => {
+        axios.delete(`/posts/${id}`, {
             headers: { accessToken: localStorage.getItem('accessToken') }
-        }).then((response) => {
-            alert(response.data.message)
-            setPostObject((post) => {
-                if (response.data.data.liked) {
-                    // console.log("Post: " + post.title + ", Likes: " + post.Likes)
-                    // Aggiungo un campo fittizio (0) in fondo alla lista del campo Likes
-                    // In questo modo, nel display ci sarà il contatore che ne conta uno in più
-                    return { ...post, Likes: [...post.Likes, 0] }
-                } else {
-                    const likeArray = [...post.Likes]
-                    likeArray.pop() // Rimuove l'ultimo elemento della lista
-                    return { ...post, Likes: likeArray }
-                }
-            })
+        }).then(() => {
+            navigate("/")
         })
-    }
-
+    })
     return (
         <div className='postPage'>
             <div className='leftSide'>
                 <div className='post' id='individual'>
+
                     <div className='title'> {postObject.title}  </div>
                     <div className='body'> {postObject.postText} </div>
                     <div className='footer'> {postObject.username}
-                        <button onClick={() => { likeAPost(postObject.id) }}> Like </button>
-                        <label>{postObject.Likes.length}</label>
+                        <div className='buttons'>
+                            {authState.username === postObject.username &&
+                                <button onClick={() => { deletePost(postObject.id) }}> Delete Post </button>}
+                        </div>
                     </div>
                 </div>
             </div>

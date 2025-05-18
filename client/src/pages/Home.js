@@ -1,12 +1,17 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom'
+import ThumbUpAltIcon from '@mui/icons-material/ThumbUpAlt';
+import ThumbUpAltOutlinedIcon from '@mui/icons-material/ThumbUpAltOutlined';
+import { AuthContext } from '../helpers/AuthContext'
 
 function Home() {
 
   // Uso l'hook per creare una variabile di stato (listOfPosts) dentro un componente React
   const [listOfPosts, setListOfPosts] = useState([])
+  const [likedPosts, setLikedPosts] = useState(false); // hook per gestire l'icona del mi piace  
+  const { authState } = useContext(AuthContext)
   // Permette di run immediatamente una func quando la pagina si carica 
   // Dopo la funizone puoi passare una lista di dipendenze di stati
   // Se la lista è vuota dice a React di eseguire la funzione solo una volta
@@ -21,12 +26,22 @@ function Home() {
 
   // "proxy": "http://localhost:3001",
   useEffect(() => {
-    axios.get('/posts')
-      .then((response) => {
+
+    // Controlla se è presente l'access token qualsiasi, se non lo è lo reindirizza al login
+    // Il vero controllo avviene dopo
+    if (!localStorage.getItem("accessToken")) {
+      navigate("/login")
+    } else {
+      axios.get('/posts', {
+        headers: { accessToken: localStorage.getItem('accessToken') }
+      }).then((response) => {
         // Aggiorno lo stato con i dati ricevuti
-        setListOfPosts(response.data.data)
+        setListOfPosts(response.data.data.listOfPosts)
+        setLikedPosts(response.data.data.likedPosts.map((like) => { return like.PostId }))
       });
-  }, []);
+    }
+
+  }, [authState.status, navigate]);
 
   const likeAPost = (postId) => {
     axios.post("/likes", {
@@ -34,7 +49,7 @@ function Home() {
     }, {
       headers: { accessToken: localStorage.getItem('accessToken') }
     }).then((response) => {
-      alert(response.data.message)
+      // alert(response.data.message)
       setListOfPosts(listOfPosts.map((post) => {
         if (post.id === postId) {
           if (response.data.data.liked) {
@@ -51,6 +66,13 @@ function Home() {
           return post
         }
       }))
+
+      // Aggiorno anche l'icona del like
+      if (likedPosts.includes(postId)) {
+        setLikedPosts(likedPosts.filter((id) => { return id !== postId })) // restituisco tutti i post tranne quello in cui ho cliccato il bottone
+      } else {
+        setLikedPosts([...likedPosts, postId]) // aggiungo il post likeato alla lista
+      }
     }
     )
   }
@@ -63,7 +85,14 @@ function Home() {
             <div className='title'>{value.title}</div>
             <div className='body' onClick={() => { navigate(`/post/${value.id}`) }}>{value.postText}</div>
             <div className='footer'>
-              {value.username} <button onClick={() => { likeAPost(value.id) }}> Like </button>
+              <div className='username'> {value.username} </div>
+              <div className='buttons'>
+                {likedPosts.includes(value.id) ? (
+                  <ThumbUpAltIcon onClick={() => { likeAPost(value.id) }} />
+                ) : (
+                  <ThumbUpAltOutlinedIcon onClick={() => { likeAPost(value.id) }} />
+                )}
+              </div>
               <label>{value.Likes.length}</label>
             </div>
           </div>

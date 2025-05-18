@@ -268,3 +268,35 @@ Ho aggiunto un file server/utils/respose.js per uniformare definitivamente le ri
 Ho spostato server/constants in server/utils/constants.js per una organizzazione migliore
 
 # Course 13 - Page Not Found
+
+Diamo un'icona al like button: https://mui.com/material-ui/material-icons/?query=like
+
+## Client
+
+npm install @mui/material @emotion/react @emotion/styled
+npm install @mui/icons-material
+
+Modifico l'api per i posts, includo pure tutti i like che appartengono all'utente che è loggato in quel momento
+
+# Course 14 - Delete a Post
+
+Agginuto un controllo alle routes Home e Create Post: ora solo chi è loggato può accerdervi
+
+In client/src/pages/Home.js ho aggiunto come dipendenze all'useEffect hook `authState.status` e `navigate` perché la pagina va in base al variare dello stato di autenticazione, infatti se sei loggato ed esegui il logout non puoi rimanere dentro
+
+Perchè quando faccio il refresh della page mi reindirizza alla pagina di login?
+
+```Javascript
+/*Prima*/
+if (!authState.status) {
+  navigate("/login")
+}
+/*Dopo*/
+if (!localStorage.getItem("accessToken")) {
+  navigate("/login")
+}
+```
+
+Andavo a controllare il valore di quella flag prima di settarla, ora controllo se è presente solo una variabile "accessToken" presente nel localStorage, però poi il vero controllo lo fai nell'auth e se non è corretto lo reindirizza lui nel login
+
+# Course 15 - Profile Page
