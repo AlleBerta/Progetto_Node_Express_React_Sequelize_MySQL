@@ -6,6 +6,8 @@ import Post from './pages/Post'
 import Login from './pages/Login'
 import Registrations from './pages/Registrations'
 import PageNotFound from './pages/PageNotFound'
+import Profile from './pages/Profile'
+import ChangePassword from './pages/ChangePassword'
 import { AuthContext } from './helpers/AuthContext'
 import { useState, useEffect } from 'react';
 import axios from 'axios'
@@ -88,6 +90,8 @@ function App() {
             <Route path="/post/:id" exact element={<Post />} />
             <Route path="/registrations" exact element={<Registrations />} />
             <Route path="/login" exact element={<Login />} />
+            <Route path="/profile/:id" exact element={<Profile />} />
+            <Route path="/changepassword" exact element={<ChangePassword />} />
             {/* Questo deve essere l'ultimo route che inserisco */}
             <Route path="*" exact element={<PageNotFound />} />
           </Routes>

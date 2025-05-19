@@ -42,7 +42,7 @@ function Post() {
                 }
             }
             );
-    }, [id]);
+    }, [id, postObject.title, postObject.postText]);
 
     // Invio la richiesta al server, aggiungendo all'header il jwt
     const addComment = () => {
@@ -92,15 +92,64 @@ function Post() {
             headers: { accessToken: localStorage.getItem('accessToken') }
         }).then(() => {
             navigate("/")
+        }).catch((error) => {
+            if (error.response) {
+                console.log("Errore dal server:", error.response.data.message);
+                alert("Errore dal server: " + error.response.data.message)
+            } else {
+                console.log("Errore generico:", error.message);
+            }
         })
     })
+
+    const editPost = (option) => {
+        // Prendo i dati del post originario
+        const newData = {
+            id: id,
+            newTitle: postObject.title,
+            newPostText: postObject.postText
+        }
+
+        // Per poi modificare il campo selezionato
+        if (option === "title") {
+            // Sto editanto il titolo
+            newData.newTitle = prompt("Enter New Title: ")
+            setPostObject({ ...postObject, title: newData.newTitle })
+        } else {
+            // Sto editanto il body
+            newData.newPostText = prompt("Enter New Text: ")
+            setPostObject({ ...postObject, postText: newData.newPostText })
+        }
+        console.log(newData)
+        axios.put("/posts", newData, {
+            headers: { accessToken: localStorage.getItem('accessToken') }
+        }).then((response) => {
+            //alert(response.data.message)
+        }).catch((error) => {
+            if (error.response) {
+                console.log("Errore dal server:", error.response.data.message);
+                alert("Errore dal server: " + error.response.data.message)
+            } else {
+                console.log("Errore generico:", error.message);
+            }
+        })
+    }
+
     return (
         <div className='postPage'>
             <div className='leftSide'>
                 <div className='post' id='individual'>
 
-                    <div className='title'> {postObject.title}  </div>
-                    <div className='body'> {postObject.postText} </div>
+                    <div className='title' onClick={() => {
+                        if (authState.username === postObject.username) {
+                            editPost("title")
+                        }
+                    }}> {postObject.title}  </div>
+                    <div className='body' onClick={() => {
+                        if (authState.username === postObject.username) {
+                            editPost("body")
+                        }
+                    }}> {postObject.postText} </div>
                     <div className='footer'> {postObject.username}
                         <div className='buttons'>
                             {authState.username === postObject.username &&

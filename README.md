@@ -300,3 +300,11 @@ if (!localStorage.getItem("accessToken")) {
 Andavo a controllare il valore di quella flag prima di settarla, ora controllo se è presente solo una variabile "accessToken" presente nel localStorage, però poi il vero controllo lo fai nell'auth e se non è corretto lo reindirizza lui nel login
 
 # Course 15 - Profile Page
+
+Ora posso vedere il profilo di un utente
+
+# Course 16 - Update Password
+
+Ora posso editare i post che hai creato in passato
+
+min 18:09 update username or psw

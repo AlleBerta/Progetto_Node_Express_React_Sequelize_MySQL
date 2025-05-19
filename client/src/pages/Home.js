@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import ThumbUpAltIcon from '@mui/icons-material/ThumbUpAlt';
 import ThumbUpAltOutlinedIcon from '@mui/icons-material/ThumbUpAltOutlined';
 import { AuthContext } from '../helpers/AuthContext'
@@ -37,6 +37,7 @@ function Home() {
       }).then((response) => {
         // Aggiorno lo stato con i dati ricevuti
         setListOfPosts(response.data.data.listOfPosts)
+        console.log(response.data.data.listOfPosts)
         setLikedPosts(response.data.data.likedPosts.map((like) => { return like.PostId }))
       });
     }
@@ -85,7 +86,7 @@ function Home() {
             <div className='title'>{value.title}</div>
             <div className='body' onClick={() => { navigate(`/post/${value.id}`) }}>{value.postText}</div>
             <div className='footer'>
-              <div className='username'> {value.username} </div>
+              <div className='username'> <Link to={`/profile/${value.UserId}`}>{value.username}</Link> </div>
               <div className='buttons'>
                 {likedPosts.includes(value.id) ? (
                   <ThumbUpAltIcon onClick={() => { likeAPost(value.id) }} />

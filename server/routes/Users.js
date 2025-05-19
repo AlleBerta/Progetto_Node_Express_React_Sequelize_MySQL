@@ -6,6 +6,8 @@ const bcrypt = require('bcrypt')
 const dotenv = require('dotenv').config()
 const { validateToken } = require('../middlewares/AuthMiddleware')
 const { generateToken } = require('../utils/jwt')
+const { sendResponse } = require('../utils/response')
+const { where } = require('sequelize')
 
 router.post("/", async (req, res) => {
     try {
@@ -67,4 +69,40 @@ router.get('/verify', validateToken, (req, res) => {
     res.status(constants.OK).json({ success: true, user: req.user })
 })
 
+router.get("/basicinfo/:id", async (req, res) => {
+    const id = req.params.id
+
+    try {
+        // Ricavo tutto tranne il campo password perché non mi serve
+        const basicInfo = await Users.findByPk(id, {
+            attributes: { exclude: ['password'] }
+        })
+
+        sendResponse(res, constants.OK, true, "", basicInfo)
+    } catch (err) {
+        res.status(constants.SERVER_ERROR).json({ success: false, message: "Errore interno." })
+    }
+})
+
+router.put('/changepassword', validateToken, async (req, res) => {
+    const { oldPassword, newPassword } = req.body
+
+    try {
+        // Controllo se lo user è presente nel db
+        const user = await Users.findOne({ where: { username: req.user.username } });
+        // Utilizzo stato 401 per rendere più difficile possibile user enumeration
+        if (!user) return sendResponse(res, constants.UNAUTHORIZED, false, "User Doesn't Exist!");
+
+        const match = await bcrypt.compare(oldPassword, user.password);
+        if (!match) return sendResponse(res, constants.UNAUTHORIZED, false, "Wrong Old Password Entered!");
+
+        const hashedNewPassword = await bcrypt.hash(newPassword, Number(process.env.PSW_SALT));
+        await Users.update({ password: hashedNewPassword }, { where: { id: user.id } });
+
+        return sendResponse(res, constants.OK, true, "Password Updated!");
+    } catch (err) {
+        console.error("Errore cambio password:", err);
+        return sendResponse(res, constants.SERVER_ERROR, false, "Internal server error");
+    }
+})
 module.exports = router

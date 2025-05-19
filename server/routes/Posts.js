@@ -22,16 +22,28 @@ router.get('/', validateToken, async (req, res) => {
     }
 });
 
+// Ricevo un unico post in base al suo postId
 router.get('/byId/:id', async (req, res) => {
     const id = req.params.id
     try {
-        const post = await Posts.findByPk(id, { include: [Likes] })
+        const post = await Posts.findByPk(id)
         res.status(constants.OK).json({ success: true, data: post })
         // res.status(constants.OK).json(post)
     } catch (err) {
         console.log(err);
         res.status(constants.SERVER_ERROR).json({ success: false, message: "Errore interno." })
-        // res.status(constants.SERVER_ERROR).json({error: "Errore interno."})
+    }
+})
+
+// Ricevo tutti i post creati da un unico UserId
+router.get('/byUserId/:id', async (req, res) => {
+    const id = req.params.id
+    try {
+        const listOfPosts = await Posts.findAll({ where: { UserId: id }, include: [Likes] })
+        sendResponse(res, constants.OK, true, "", listOfPosts)
+    } catch (err) {
+        console.log(err);
+        sendResponse(res, constants.SERVER_ERROR, false, "Errore interno.", err)
     }
 })
 
@@ -39,16 +51,50 @@ router.post("/", validateToken, async (req, res) => {
     try {
         const post = req.body
         post.username = req.user.username
-        console.log(post)
+        post.UserId = req.user.id
+
         await Posts.create(post); // Inserisce i dati nella tabella
         sendResponse(res, constants.RESOURCE_CREATED, true, "Post Creato")
     } catch (err) {
-        console.log("Bella")
         console.log(err);
         sendResponse(res, constants.SERVER_ERROR, false, "Errore interno.")
     }
 })
 
+router.put("/", validateToken, async (req, res) => {
+
+    const { newTitle, newPostText, id } = req.body;
+
+    // Validazione campi
+    if (!id) {
+        return sendResponse(res, constants.BAD_REQUEST, false, "ID del post mancante.");
+    }
+
+    const updateFields = {};
+    if (newTitle !== undefined) updateFields.title = newTitle;
+    if (newPostText !== undefined) updateFields.postText = newPostText;
+
+    if (Object.keys(updateFields).length === 0) {
+        return sendResponse(res, constants.BAD_REQUEST, false, "Nessun campo da aggiornare.");
+    }
+    try {
+
+        // l'update con sequelize funziona così:
+        // Primo {}: inserisco i campi che vado ad aggiornare
+        // Secondo {}: inserisco il filtro
+        const [updatedRows] = await Posts.update(updateFields, { where: { id: id } });
+
+        if (updatedRows === 0) {
+            return sendResponse(res, constants.NOT_FOUND, false, "Post non trovato o nessuna modifica necessaria.");
+        }
+
+        sendResponse(res, constants.OK, true, "Post aggiornato con successo.");
+    } catch (err) {
+        console.error("Errore durante l'aggiornamento del post:", err);
+        sendResponse(res, constants.SERVER_ERROR, false, "Errore interno del server.");
+    }
+
+})
 router.delete("/:postId", validateToken, async (req, res) => {
     const postId = req.params.postId
 
@@ -69,4 +115,5 @@ router.delete("/:postId", validateToken, async (req, res) => {
         return res.status(constants.SERVER_ERROR).json({ success: false, message: "Internal server error." });
     }
 })
+
 module.exports = router
